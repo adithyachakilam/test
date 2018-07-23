@@ -1,4 +1,5 @@
-This is my final Project for UIUC CS498 Data Visualization Course.
+This is my final project for UIUC CS498 Data Visualization Course. The midterm project can be found at
+https://public.tableau.com/profile/tianfei.chen#!/vizhome/UIUCCS498Telecommunications/Description
 
 As the purpose of the work is to learn D3.js and for peer review, vanilla ES 5 is used without any packaging tool. Each
 chart is placed in its own file.
