@@ -24,7 +24,7 @@ var svg = d3.select('#svg2')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // get data
-var url = '../data/output-grouped-times-hourly.json';
+var url = 'data/output-grouped-times-hourly.json';
 d3.cachedJson(url, 'chart2', function(data) {
   // take records from only 1 day
   data = data.slice(0, 24);

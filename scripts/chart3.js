@@ -26,7 +26,7 @@ var svg = d3.select('#svg3')
   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // get data
-var url = '../data/output-grouped-times-filtered-squares-hourly.json';
+var url = 'data/output-grouped-times-filtered-squares-hourly.json';
 d3.cachedJson(url, 'chart3', function(data) {
   // parse time to native js date
   data.forEach(function(d) {
