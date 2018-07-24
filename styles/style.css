@@ -112,7 +112,7 @@ a {
 /* Chart Custom CSS
  * --------------------------------------- */
 
-.chart + .intro p {
+.chart + .intro p, .panel + .intro p {
   font-size: 1.2em;
 }
 

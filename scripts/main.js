@@ -5,9 +5,10 @@ new fullpage('#fullpage', {
   sectionsColor: ['#f7f3de'],
   autoScrolling: true,
   fitToSection: true,
-
   slidesNavigation: true,
   slidesNavPosition: 'top',
+
+  scrollOverflow: true,
 
   // events
   afterSlideLoad: function(section, origin, destination, direction) {
