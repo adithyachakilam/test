@@ -6,3 +6,5 @@ chart is placed in its own file.
 
 Only a week of data are used from the original dataset. They are also pre-processed by a Python script so that they can
 be fit into a browser envrionment.
+
+The live version of this project can be found at https://tianfeichen.github.io/cs498-data-visualization/
