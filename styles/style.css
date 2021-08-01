@@ -7,6 +7,21 @@ pre, form, fieldset, input, textarea, p, blockquote, th, td {
   margin: 0;
 }
 
+select {
+  display: block;
+}
+.bar {
+  fill: purple;
+  opacity: 0.8;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
 a {
   text-decoration: none;
 }
@@ -129,6 +144,12 @@ a {
 
 .chart {
   margin: 20px auto 20px;
+  width: 682px;
+  height: 502px;
+}
+
+.chart1 {
+  margin: 20px 0px 20px 500px !important;
   width: 682px;
   height: 502px;
 }

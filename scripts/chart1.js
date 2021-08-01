@@ -2,170 +2,156 @@
 // https://bl.ocks.org/d3noob/6f082f0e3b820b6bf68b78f2f7786084
 // https://bl.ocks.org/mbostock/5537697
 
-charts.chart1 = function() {
+charts.chart1 = function () {
+    var fileName = "data/club_stats.csv";
+    var textFields = [ 'Country_with_most_players', 'Position', 'Highest_Paid_Player']
+    var nutritionFields = ['Average_Age', 'Average_potential', //'Highest_Paid_Player',
+    'Highest_Paid_Wage(Euros)', 'Total_Players']
 
-// initialise layout variables
-var margin = {top: 50, right: 20, bottom: 50, left: 60};
-var width = 600;
-var height = 400;
+    d3.csv(fileName, function (error, data) {
+        var cerealMap = {};
+        data.forEach(function (d) {
+            var cereal = d.Club;
+            cerealMap[cereal] = [];
 
-// initialise scale functions
-var x = d3.scaleTime().range([0, width]);
-var x2 = d3.scaleTime().range([0, width]);
-var y = d3.scaleLog().range([height, 0]);
+            // { cerealName: [ bar1Val, bar2Val, ... ] }
+            nutritionFields.forEach(function (field) {
+                cerealMap[cereal].push(+d[field]);
+            });
+            textFields.forEach(function (field) {
+                cerealMap[cereal].push(d[field]);
+            });
+        });
+        console.log(cerealMap);
+        makeVis(cerealMap);
+    });
 
-// parse date / time
-var strictIsoParse = d3.utcParse('%Y-%m-%dT%H:%M:%S.%LZ');
-// format date / time
-var hourFormat = d3.utcFormat('%H %p');
+    var makeVis = function (cerealMap) {
+        // Define dimensions of vis
+        var margin = {top: 40, right: 20, bottom: 60, left: 60};
+        var width = 550;
+        var height = 400;
 
-// initialise charts
-var svg = d3.select('#svg1')
-  .attr('width', width + margin.left + margin.right)
-  .attr('height', height + margin.top + margin.bottom)
-  .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        // Make x scale
+        var xScale = d3.scale.ordinal()
+            .domain(nutritionFields)
+            .rangeRoundBands([0, width], 0.1);
 
-// get data
-var url = 'data/output-grouped-times.json';
-d3.cachedJson(url, 'chart1', function(data) {
-  // parse time to native js date
-  data.forEach(function(d) {
-    d.time = strictIsoParse(d.time_display);
-    d.hour = hourFormat(d.time);
-  });
+        // Make y scale, the domain will be defined on bar update
+        var yScale = d3.scale.linear()
+            .range([height, 0]);
 
-  // draw data
-  draw(data);
-});
+        // Create canvas
+        var canvas = d3.select("#svg1")
+            .append('svg')
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// draw data
-function draw(data) {
-  // var beginTime = data[0].time;
-  // var endTime = data[data.length-1].time;
-  // console.log(beginTime, endTime, hourFormat(beginTime), hourFormat(endTime))
+        // Make x-axis and add to canvas
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient("bottom");
 
-  // scale the range of the data
-  x.domain(
-    d3.extent(data, function(d) { return d.time; })
-  );
-  x2.domain(
-    d3.extent(data, function(d) { return d.time; })
-  );
-  y.domain(
-    [
-      d3.min(data, function(d) { return d.call_all; }),
-      d3.max(data, function(d) { return d.internet_traffic; })
-    ]
-  );
+        canvas.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-15)");
 
-  // add axis
-  svg.append('g')
-    .attr('transform', 'translate(0,' + height + ')')
-    .call(
-      d3.axisBottom(x).tickFormat(hourFormat)
-    );
-  svg.append('g')
-    .attr('transform', 'translate(0,' + (height+8) + ')')
-    .call(
-      d3.axisBottom(x2).tickFormat(d3.timeFormat('%a'))
-    );
-  svg.append('g')
-    .call(
-      d3.axisLeft(y).tickFormat(d3.format('.2s'))
-    );
-  
-  // add axis label
-  svg.append('text')
-    .attr('transform', 'translate(' + (width/2.5) + ',' + (height+45) + ')')
-    .text('Hours of Week');
-  svg.append('text')
-    .attr('transform', 'rotate(-90)')
-    .attr('dx', '-15em')
-    .attr('dy', '-2.5em')
-    .text('Activity');
-  
-  // draw legend
-  drawLegend();
+        // Make y-axis and add to canvas
+        var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient("left");
 
-  // draw internet traffic, sms and call
-  drawCircle(data, 'internet_traffic', d3.schemeCategory10[0]);
-  drawCircle(data, 'sms_all', d3.schemeCategory10[1]);
-  drawCircle(data, 'call_all', d3.schemeCategory10[2]);
+        var yAxisHandleForUpdate = canvas.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
 
-  // draw annotation
-  drawAnnotation();
-}
+        yAxisHandleForUpdate.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Value");
 
-// draw all legends on top
-function drawLegend() {
-  var x = 150;
-  var y = -30;
-  var legend = svg.append('g');
+        var updateBars = function (data) {
+            // First update the y-axis domain to match data
+            yScale.domain(d3.extent(data));
+            yAxisHandleForUpdate.call(yAxis);
 
-  legend.append('circle')
-    .attr('cx', x)
-    .attr('cy', y)
-    .attr('r', '5')
-    .style('fill', d3.schemeCategory10[0])
-  x += 20;
-  legend.append('text')
-    .attr('x', x)
-    .attr('y', y+5)
-    .text('Internet');
+            var bars = canvas.selectAll(".bar").data(data);
 
-  x += 100;
-  legend.append('circle')
-    .attr('cx', x)
-    .attr('cy', y)
-    .attr('r', '5')
-    .style('fill', d3.schemeCategory10[1])
-  x += 20;
-  legend.append('text')
-    .attr('x', x)
-    .attr('y', y+5)
-    .text('SMS');
+            // Add bars for new data
+            bars.enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", function (d, i) { return xScale(nutritionFields[i]); })
+                .attr("width", xScale.rangeBand())
+                .attr("y", function (d, i) { return yScale(d); })
+                .attr("height", function (d, i) { return height - yScale(d); });
 
-  x += 100;
-  legend.append('circle')
-    .attr('cx', x)
-    .attr('cy', y)
-    .attr('r', '5')
-    .style('fill', d3.schemeCategory10[2])
-  x += 20;
-  legend.append('text')
-    .attr('x', x)
-    .attr('y', y+5)
-    .text('Call');
-}
+                debugger;
+            bars.append("text")
+            .text(function(d) { 
+                return d;
+            })
+            .attr("x", function(d, i){
+                return xScale(nutritionFields[i]) + xScale.rangeBand()/2;
+            })
+            .attr("y", function(d){
+                return yScale(d) - 5;
+            })
+            .attr("font-family" , "sans-serif")
+            .attr("font-size" , "14px")
+            .attr("fill" , "black")
+            .attr("text-anchor", "middle");
 
-// draw different type of data as scatterplot
-function drawCircle(data, type, color) {
-  svg.selectAll('circle.' + type)
-    .data(data)
-    .enter()
-    .append('circle')
-      .classed(type, true)
-      .attr('r', 2)
-      .style('fill', color)
-      .style('opacity', 0.8)
-      .attr('cx', function(d) { return x(d.time); })
-      .attr('cy', function(d) { return y(d[type]); });
-}
+            // Update old ones, already have x / width from before
+            bars
+                .transition().duration(250)
+                .attr("y", function (d, i) { return yScale(d); })
+                .attr("height", function (d, i) { return height - yScale(d); });
 
-function drawAnnotation() {
-  var annotation = svg.append('g');
-  annotation.append('text')
-    .attr('x', 60)
-    .attr('y', 370)
-    .classed('annotation', true)
-    .text('Call drops significantly at night, especially during week days');
-  annotation.append('rect')
-    .attr('x', 60)
-    .attr('y', 380)
-    .attr('width', 400)
-    .attr('height', 20)
-    .classed('annotation', true);
-}
+            // Remove old ones
+            bars.exit().remove();
+            // debugger;
+            d3.select("#CountryLabel").text(data[4]);
+            d3.select("#PlayerHigh").text(data[6]);
+            d3.select("#Position").text(data[5]);
+        };
 
-}
+        // Handler for dropdown value change
+        var dropdownChange = function () {
+            var newCereal = d3.select(this).property('value'),
+                newData = cerealMap[newCereal];
+
+            updateBars(newData);
+        };
+
+        // Get names of cereals, for dropdown
+        var cereals = Object.keys(cerealMap).sort();
+
+        var dropdown = d3.select("#svg1")
+            .insert("select", "svg")
+            .on("change", dropdownChange);
+
+        dropdown.selectAll("option")
+            .data(cereals)
+            .enter().append("option")
+            .attr("value", function (d) { return d; })
+            .text(function (d) {
+                return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
+            });
+
+        var initialData = cerealMap[cereals[0]];
+        updateBars(initialData);
+    };
+
+
+};

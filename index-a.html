@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SaiKiran CS Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.css"
+        integrity="sha512-4rPgyv5iG0PZw8E+oRdfN/Gq+yilzt9rQ8Yci2jJ15rAyBmF0HBE4wFjBkoB72cxBeg63uobaj1UcNt/scV93w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    </style>
+</head>
+
+<body>
+
+    <div id="fullpage">
+        <div class="section active" id="section0">
+            <h1>Player Analysis on FIFA Data</h1>
+            <div class="intro">
+                <p>&nbsp;</p>
+                <h2>Created by SaiKiran Kancharla</h2>
+                <div>Swipe down to continue</div>
+            </div>
+        </div>
+        <div class="section" id="section1">
+            <div class="slide active">
+                <h1 class="intro"> Swipe to Right to view analysis</h1>
+            </div>
+            <div class="slide" data-anchor="chart1">
+                <h3>Different Usage Trends in Hours of Week</h3>
+                <div style="display: flex;">
+                    <div class="chart1 chart">
+                        <div id="svg1"></div>
+                    </div>
+                    <div style="margin-left: 20px; margin-top: 30px;">
+                        <h5>Highest Paid Player</h5>
+                        <h3 style="margin-top: 0px;" id="PlayerHigh"> India </h3>
+                        <p>&nbsp;</p>
+                        <h5>Country with most players</h5>
+                        <h3 style="margin-top: 0px;" id="CountryLabel"> India </h3>
+                        <p>&nbsp;</p>
+                        <h5>Position</h5>
+                        <h3 style="margin-top: 0px;" id="Position"> India </h3>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="intro">
+                    <p>
+                        The first scatter chart shows Call activities drops significantly at night especially during
+                        week days. However
+                        it is difficult to see the details in this view as logarithmic scale has been applied on Y Axis.
+                    </p>
+                    <p>
+                        So let's move on to next scene.
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h1>Only text</h1>
+            </div>
+            <div class="slide">
+                <h1>And text</h1>
+            </div>
+            <div class="slide">
+                <h1>And more text</h1>
+            </div>
+        </div>
+        <div class="section" id="section2">
+            <h1>No wraps, no extra markup</h1>
+        </div>
+        <div class="section" id="section3">
+            <h1>Just the simplest demo ever</h1>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/vendors/scrolloverflow.min.js"
+        integrity="sha512-pYyQWhzi2lV+RM4GmaUA56VPL48oLVvsHmP9tuQ8MaZMDHomVEDjXXnfSVKXayy+wLclKPte0KbsuVoFImtE7w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.js"
+        integrity="sha512-gSf3NCgs6wWEdztl1e6vUqtRP884ONnCNzCpomdoQ0xXsk06lrxJsR7jX5yM/qAGkPGsps+4bLV5IEjhOZX+gg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script>
+        var charts = {};
+    </script>
+    <script src="scripts/chart1.js"></script>
+    <script src="scripts/chart2.js"></script>
+    <script src="scripts/chart3.js"></script>
+    <script src="scripts/chart4.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>
